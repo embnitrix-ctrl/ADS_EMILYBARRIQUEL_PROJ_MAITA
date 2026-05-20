@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
+
 public class AndarEntity implements Serializable {
     
 }
