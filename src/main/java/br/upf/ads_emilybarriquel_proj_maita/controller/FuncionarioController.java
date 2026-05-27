@@ -17,9 +17,21 @@ public class FuncionarioController implements Serializable {
 
     public FuncionarioController() {
     }
-    
+    //func entidade
     FuncionarioEntity funcionario = new FuncionarioEntity();
+    //lista
+    private List<FuncionarioEntity> funcionarioList = new ArrayList<>();
+     
+    private FuncionarioEntity selected;
+   //gets e sets
+     
+    public FuncionarioEntity getSelected() {
+        return selected;
+    }
 
+    public void setSelected(FuncionarioEntity selected) {
+        this.selected = selected;
+    }
     public FuncionarioEntity getFuncionario() {
         return funcionario;
     }
@@ -36,7 +48,7 @@ public class FuncionarioController implements Serializable {
         this.funcionarioList = funcionarioList;
     }
     
-    private List<FuncionarioEntity> funcionarioList = new ArrayList<>();
+   
     
      private int gerarId() {
         int id = 1;

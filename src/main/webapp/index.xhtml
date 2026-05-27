@@ -13,6 +13,9 @@
                 <p:growl id="growl" showDetail="true" />
                 <p:fieldset toggleable="true">
                     <p:dataTable id="datalist" value="#{funcionarioController.funcionarioList}" var="item"  
+                                 selectionMode="single" selection="#{pessoaController.selected}"
+                                 widgetVar="datalistPessoaWidgetVar"
+                                 rowKey="#{item.id}"
                                  paginator="true"
                                  rows="3"
                                  rowsPerPageTemplate="5,10,50,100"
