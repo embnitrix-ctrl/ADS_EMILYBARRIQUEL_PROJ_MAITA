@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+    <h:head>
+        <title>Maita</title>
+    </h:head>
+    <h:body>
+      <h:form id="frmList">            
+            <h:panelGroup id="pngList"> 
+                <p:growl id="growl" showDetail="true" />
+                <p:fieldset toggleable="true">
+                    <p:dataTable id="datalist" value="#{funcionarioController.funcionarioList}" var="item"  
+                                 paginator="true"
+                                 rows="3"
+                                 rowsPerPageTemplate="5,10,50,100"
+                                 emptyMessage="Não há..."
+                                 >
+
+                        <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
+                            <f:facet name="header">
+                                <h:outputText value="ID"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                        <p:column width="10%" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                            <f:facet name="header">
+                                <h:outputText value="Nome"/>
+                            </f:facet>
+                            <h:outputText value="#{item.nome}"/>
+                        </p:column>
+
+                        <p:column width="8%" sortBy="#{item.email}" filterBy="#{item.email}">
+                            <f:facet name="header">
+                                <h:outputText value="Email"/>
+                            </f:facet>
+                            <h:outputText value="#{item.email}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnCreate" value="Incluir Funcionario"  icon="pi pi-file" 
+                                             onclick="PF('dlgCreate').show()"/> 
+                        </f:facet>
+                    </p:dataTable>
+                </p:fieldset>  
+            </h:panelGroup>
+        </h:form>
+        
+        <p:dialog header="Novo Funcionario" widgetVar="dlgCreate" height="400" width="600" showEffect="fade" modal="true">
+            <h:form id="CreateForm">
+                <p:growl id="growl" showDetail="true" />
+                <h:panelGrid id="pngCadastro" columns="2">   
+                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
+                    <p:inputText id="iptNome" size="40" label="Nome" required="true" 
+                                 requiredMessage="Obrigatório!"
+                                 value="#{funcionarioController.funcionario.nome}" maxlength="50" />
+                    
+                    <p:outputLabel id="oplEmail" value="Email:" for="iptEmail"/>
+                    <p:inputText id="iptEmail" size="40" label="Nome" required="true" 
+                                 requiredMessage="Obrigatório" validatorMessage="Inválido"
+                                 value="#{funcionarioController.funcionario.email}" maxlength="50" >
+                        <f:validateRegex pattern="[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})"  />
+                    </p:inputText>
+                    
+                </h:panelGrid>   
+                <p:commandButton id="btnCadastrar" value="Cadastrar" update="@form, frmList" icon="pi pi-save"
+                                 action="#{funcionarioController.adicionarFuncionario()}" onclick="dlgCreate.hide()"/>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>
