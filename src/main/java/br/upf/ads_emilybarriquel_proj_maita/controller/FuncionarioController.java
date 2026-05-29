@@ -69,4 +69,27 @@ public class FuncionarioController implements Serializable {
         exibirMensagem();
         funcionario = new FuncionarioEntity();
     }
+
+    public void editarFuncionario() {
+        int index = funcionarioList.indexOf(selected);
+        funcionarioList.set(index, selected);
+        selected = null;
+        FacesMessage fm = new FacesMessage(
+                FacesMessage.SEVERITY_INFO, 
+                "Shalalashalala!", 
+                "Registro alterado com sucesso.");
+        FacesContext.getCurrentInstance().addMessage(null, fm);
+    }
+
+    public void deletarFuncionario() {
+
+        int index = funcionarioList.indexOf(selected);
+        funcionarioList.remove(index);
+        selected = null;
+        FacesMessage fm = new FacesMessage(
+                FacesMessage.SEVERITY_INFO, 
+                "shalala",
+                "Registro excluído com sucesso.");
+        FacesContext.getCurrentInstance().addMessage(null, fm);
+    }
 }
