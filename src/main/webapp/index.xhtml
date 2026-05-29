@@ -64,6 +64,11 @@
                                 <p:confirm header="Confirmar Exclusão" message="Você confirma exclusão do registro?" 
                                            icon="ui-icon-alert"  />
                             </p:commandButton>
+                            
+                            <!--Botão utilizado para abrir a modal de visualização -->
+                            <p:commandButton id="btnView" icon="pi pi-user-edit"  value="Detalhes do funcionario" 
+                                             update="formView" oncomplete="PF('dlgView').show()" 
+                                             disabled="#{empty funcionarioController.selected}"/>
                         </f:facet>
                     </p:dataTable>
                 </p:fieldset> 
@@ -122,6 +127,23 @@
                 <p:commandButton id="btnSalvarEdicao" value="Salvar" update="@form, frmList" 
                                  onclick="dlgEdit.hide()" icon="pi pi-save"
                                  action="#{funcionarioController.editarFuncionario()}" />
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog header="Visualizar Detalhes do Funcionario" widgetVar="dlgView"  height="250" 
+                  width="500" showEffect="fade" modal="true">
+            <h:form id="formView">
+                <h:panelGrid id="pngView" columns="2">   
+                    <p:outputLabel value="ID:" />
+                    <p:outputLabel value="#{funcionarioController.selected.id}"  />
+
+                    <p:outputLabel value="Nome: " />
+                    <p:outputLabel value="#{funcionarioController.selected.nome}" />
+
+                    <p:outputLabel value="Email: " />                    
+                    <p:outputLabel value="#{funcionarioController.selected.email}" />
+
+                </h:panelGrid>   
             </h:form>
         </p:dialog>
     </h:body>
