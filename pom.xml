@@ -20,6 +20,13 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- dependência local do manhattan -->
+        <dependency>
+            <groupId>org.primefaces.themes</groupId>
+            <artifactId>manhattan</artifactId>
+            <version>7.0.0</version>
+        </dependency>
+        
         <!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
         <dependency>
         <groupId>org.primefaces</groupId>
