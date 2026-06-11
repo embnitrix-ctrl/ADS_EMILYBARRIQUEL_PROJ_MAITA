@@ -64,7 +64,7 @@
                                            icon="ui-icon-alert" />
                             </p:commandButton>
 
-                            <p:commandButton id="btnView" icon="pi pi-user-edit" value="Detalhes da Funcionario" 
+                            <p:commandButton id="btnView" icon="pi pi-user-edit" value="Detalhes do Funcionario" 
                                              update=":formView" oncomplete="PF('dlgView').show()" 
                                              disabled="#{empty funcionarioController.selected}"/>
                         </f:facet>
@@ -98,12 +98,14 @@
                     <p:outputLabel id="oplSenha" value="Senha:" for="iptSenha"/>
                     <p:inputText id="iptSenha" size="40" label="Senha" required="true" 
                                  requiredMessage="Obrigatório"
-                                 value="#{funcionarioController.funcionario.senha}" maxlength="50" >    
-                    </p:inputText>
-                    
+                                 value="#{funcionarioController.funcionario.senha}" maxlength="50" />    
+                                
                 </h:panelGrid>   
-                <p:commandButton id="btnCadastrar" value="Cadastrar" update="@form, :frmList" icon="pi pi-save"
-                                 action="#{funcionarioController.adicionarFuncionario()}" oncomplete="PF('dlgCreate').hide()"/>
+                <p:commandButton actionListener="#{funcionarioController.adicionarFuncionario()}" 
+                                 icon="pi pi-save" value="Cadastrar" 
+                                 update=":frmList, CreateForm" 
+                                onclick="dlgCreate.hide()"/>
+                    
             </h:form>
         </p:dialog>
         

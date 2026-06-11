@@ -16,7 +16,7 @@ import java.util.List;
 @SessionScoped
 public class FuncionarioController implements Serializable {
 
-    // Aqui está a injeção correta apontando para o seu Facade real
+    //INJECAO
     @EJB
     private FuncionarioFacade ejbFacade;
 
@@ -87,7 +87,7 @@ public class FuncionarioController implements Serializable {
             if (persistAction != null) {
                 switch (persistAction) {
                     case CREATE:
-                        // Se o seu AbstractFacade exigir "createReturn", troque "create" por "createReturn"
+                      
                         ejbFacade.create(funcionario);
                         break;
                     case UPDATE:

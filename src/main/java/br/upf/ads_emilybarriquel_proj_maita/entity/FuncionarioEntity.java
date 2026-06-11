@@ -52,11 +52,11 @@ public class FuncionarioEntity implements Serializable{
         this.senha = senha;
     }
 
-      public int getId() {
+      public Integer getId() {
         return id;
     }
     
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
