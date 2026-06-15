@@ -19,7 +19,7 @@
                         <p:outputLabel value="Apartamento:" for="selAptFiltro"/>
                         <p:selectOneMenu id="selAptFiltro"
                                          value="#{manutencaoController.apartamentoFiltro}"
-                                         converter="#{apartamentoConverter}">
+                                         converter="apartamentoConverter">
                             <f:selectItem itemLabel="-- Todos os Apartamentos --" itemValue="#{null}" noSelectionOption="true"/>
                             <f:selectItems value="#{manutencaoController.apartamentoList}"
                                            var="ap"
@@ -50,17 +50,14 @@
                         <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView btnFechar btnReabrir"/>
                         <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView btnFechar btnReabrir"/>
 
-                        <p:column width="4%" sortBy="#{item.id}">
-                            <f:facet name="header"><h:outputText value="ID"/></f:facet>
-                            <h:outputText value="#{item.id}"/>
-                        </p:column>
+                        
 
                         <p:column width="10%" sortBy="#{item.apartamento.numero}" filterBy="#{item.apartamento.numero}">
                             <f:facet name="header"><h:outputText value="Apartamento"/></f:facet>
                             <h:outputText value="Apto #{item.apartamento.numero}"/>
                         </p:column>
 
-                        <p:column width="8%">
+                        <p:column width="8%" sortBy="#{item.apartamento.andar.numero}" filterBy="#{item.apartamento.andar.numero}">
                             <f:facet name="header"><h:outputText value="Andar"/></f:facet>
                             <h:outputText value="#{item.apartamento.andar.numero}º Andar"/>
                         </p:column>
@@ -78,11 +75,12 @@
                         <p:column width="8%" sortBy="#{item.status}" filterBy="#{item.status}">
                             <f:facet name="header"><h:outputText value="Status"/></f:facet>
                             <p:tag value="#{item.status}"
-                                   severity="#{item.status == 'ABERTO' ? 'warning' : 'success'}"/>
+                                   severity="#{item.status == 'ABERTO' ? 'danger' : 'info'}"/>
                         </p:column>
 
+                       
                         <p:column width="12%" sortBy="#{item.dataAbertura}">
-                            <f:facet name="header"><h:outputText value="Abertura"/></f:facet>
+                          <f:facet name="header"><h:outputText value="Abertura"/></f:facet>
                             <h:outputText value="#{item.dataAbertura}">
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
                             </h:outputText>
@@ -94,6 +92,7 @@
                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
                             </h:outputText>
                         </p:column>
+                        -->
 
                         <f:facet name="footer">
                             <p:commandButton id="btnCreate" value="Abrir Chamado" icon="pi pi-plus"
@@ -154,7 +153,7 @@
                     <p:outputLabel value="Apartamento:" for="selAptC"/>
                     <p:selectOneMenu id="selAptC"
                                      value="#{manutencaoController.manutencao.apartamento}"
-                                     converter="#{apartamentoConverter}"
+                                     converter="apartamentoConverter"
                                      required="true"
                                      requiredMessage="Selecione um apartamento!">
                         <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
@@ -229,7 +228,7 @@
                     <p:outputLabel value="Apartamento:" for="selAptE"/>
                     <p:selectOneMenu id="selAptE"
                                      value="#{manutencaoController.selected.apartamento}"
-                                     converter="#{apartamentoConverter}"
+                                     converter="apartamentoConverter"
                                      required="true"
                                      requiredMessage="Selecione um apartamento!">
                         <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
@@ -278,7 +277,7 @@
 
                     <p:outputLabel value="Status:"/>
                     <p:tag value="#{manutencaoController.selected.status}"
-                           severity="#{manutencaoController.selected.status == 'ABERTO' ? 'warning' : 'success'}"/>
+                           severity="#{manutencaoController.selected.status == 'ABERTO' ? 'danger' : 'info'}"/>
 
                     <p:outputLabel value="Data Abertura:"/>
                     <h:outputText value="#{manutencaoController.selected.dataAbertura}">

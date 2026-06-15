@@ -30,10 +30,6 @@
                         <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
                         <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
 
-                        <p:column width="5%" sortBy="#{item.id}" filterBy="#{item.id}">
-                            <f:facet name="header"><h:outputText value="ID"/></f:facet>
-                            <h:outputText value="#{item.id}"/>
-                        </p:column>
 
                         <p:column width="10%" sortBy="#{item.numero}" filterBy="#{item.numero}">
                             <f:facet name="header"><h:outputText value="Número"/></f:facet>
@@ -41,7 +37,7 @@
                         </p:column>
 
                         <p:column width="20%" sortBy="#{item.nome}" filterBy="#{item.nome}">
-                            <f:facet name="header"><h:outputText value="Nome / Identificação"/></f:facet>
+                            <f:facet name="header"><h:outputText value="Descrição"/></f:facet>
                             <h:outputText value="#{item.nome}"/>
                         </p:column>
 
@@ -90,7 +86,7 @@
                                  requiredMessage="Número é obrigatório!"
                                  value="#{andarController.andar.numero}"/>
 
-                    <p:outputLabel value="Nome / Identificação:" for="iptNome"/>
+                    <p:outputLabel value="Descrição:" for="iptNome"/>
                     <p:inputText id="iptNome" size="40" label="Nome" required="true"
                                  requiredMessage="Nome é obrigatório!"
                                  value="#{andarController.andar.nome}" maxlength="100"/>

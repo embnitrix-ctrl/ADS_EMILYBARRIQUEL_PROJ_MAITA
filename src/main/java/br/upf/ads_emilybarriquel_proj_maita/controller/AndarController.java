@@ -47,12 +47,34 @@ public class AndarController implements Serializable {
     }
 
     public void adicionarAndar() {
-        persist(PersistAction.CREATE, "Andar cadastrado com sucesso!");
+         for (AndarEntity a : getAndarList()) {
+
+        if (a.getNumero().equals(andar.getNumero())) {
+            addErrorMessage("Já existe um andar com o número " + andar.getNumero() + ".");
+            return;
+        }
+
+    }
+
+    persist(PersistAction.CREATE, "Andar cadastrado com sucesso!");
     }
 
     public void editarAndar() {
-        persist(PersistAction.UPDATE, "Andar alterado com sucesso!");
+
+    for (AndarEntity a : getAndarList()) {
+
+        if (!a.getId().equals(selected.getId())
+                && a.getNumero().equals(selected.getNumero())) {
+
+            addErrorMessage("Já existe um andar com o número " + selected.getNumero() + ".");
+            return;
+        }
+
     }
+
+    persist(PersistAction.UPDATE, "Andar alterado com sucesso!");
+    }
+    
 
     public void deletarAndar() {
         persist(PersistAction.DELETE, "Andar excluído com sucesso!");

@@ -4,6 +4,18 @@
         <param-name>jakarta.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
+    <context-param>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    <filter>
+        <filter-name>FiltroAdministrativo</filter-name>
+        <filter-class>br.upf.ads_emilybarriquel_proj_maita.FiltroAdministrativo</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FiltroAdministrativo</filter-name>
+        <url-pattern>/faces/admin/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
@@ -21,30 +33,24 @@
     <welcome-file-list>
         <welcome-file>faces/login.xhtml</welcome-file>
     </welcome-file-list>
-    
     <mime-mapping>
         <extension>woff2</extension>
         <mime-type>application/x-font-woff2</mime-type>
     </mime-mapping>
-    
     <mime-mapping>
         <extension>eot</extension>
-        <mime-type>application/vnd.ms-fontobject</mime-type>       
+        <mime-type>application/vnd.ms-fontobject</mime-type>
     </mime-mapping>
-    
     <mime-mapping>
         <extension>woff</extension>
         <mime-type>application/x-font-woff</mime-type>
     </mime-mapping>
-    
     <mime-mapping>
         <extension>ttf</extension>
         <mime-type>application/x-font-ttf</mime-type>
     </mime-mapping>
-    
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>false</param-value>
     </context-param>
-
 </web-app>

@@ -43,24 +43,29 @@ public class FuncionarioFacade extends AbstractFacade<FuncionarioEntity>{
      * @param senha
      * @return 
      */
-    public FuncionarioEntity buscarPorEmail(String email, String senha) {
-        FuncionarioEntity funcionario = new FuncionarioEntity();
-        try {
-            //utilizando JPQL para construir a query 
-            Query query = getEntityManager()
-                    .createQuery("SELECT f FROM FuncionarioEntity f WHERE f.email = :email AND f.senha = :senha");
-            query.setParameter("email", email);
-            query.setParameter("senha", senha);
+   public FuncionarioEntity buscarPorEmail(String email, String senha) {
 
-            //verifica se existe algum resultado para não gerar excessão
-            if (!query.getResultList().isEmpty()) {
-                funcionario = (FuncionarioEntity) query.getSingleResult();
-            }
-        } catch (Exception e) {
-            System.out.println("Erro: " + e);
+    try {
+
+        Query query = getEntityManager()
+                .createQuery(
+                    "SELECT f FROM FuncionarioEntity f " +
+                    "WHERE f.email = :email AND f.senha = :senha"
+                );
+
+        query.setParameter("email", email);
+        query.setParameter("senha", senha);
+
+        if (!query.getResultList().isEmpty()) {
+            return (FuncionarioEntity) query.getSingleResult();
         }
-        return funcionario;
+
+    } catch (Exception e) {
+        System.out.println("Erro: " + e);
     }
+
+    return null;
+}
 }
 
     

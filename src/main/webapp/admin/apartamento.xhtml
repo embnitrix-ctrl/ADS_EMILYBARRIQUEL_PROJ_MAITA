@@ -19,7 +19,7 @@
                         <p:outputLabel value="Andar:" for="selAndarFiltro"/>
                         <p:selectOneMenu id="selAndarFiltro"
                                          value="#{apartamentoController.andarFiltro}"
-                                         converter="#{andarConverter}">
+                                         converter="andarConverter">
                             <f:selectItem itemLabel="-- Todos os Andares --" itemValue="#{null}" noSelectionOption="true"/>
                             <f:selectItems value="#{apartamentoController.andarList}"
                                            var="a" itemLabel="#{a.numero}º Andar - #{a.nome}"
@@ -49,19 +49,9 @@
                         <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
                         <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
 
-                        <p:column width="5%" sortBy="#{item.id}" filterBy="#{item.id}">
-                            <f:facet name="header"><h:outputText value="ID"/></f:facet>
-                            <h:outputText value="#{item.id}"/>
-                        </p:column>
-
                         <p:column width="10%" sortBy="#{item.numero}" filterBy="#{item.numero}">
                             <f:facet name="header"><h:outputText value="Número"/></f:facet>
                             <h:outputText value="#{item.numero}"/>
-                        </p:column>
-
-                        <p:column width="15%" sortBy="#{item.andar.numero}">filterBy="#{item.andar.nome}">
-                            <f:facet name="header"><h:outputText value="Andar"/></f:facet>
-                            <h:outputText value="#{item.andar.numero}º - #{item.andar.nome}"/>
                         </p:column>
 
                         <p:column width="25%" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
@@ -119,7 +109,7 @@
                     <p:outputLabel value="Andar:" for="selAndarC"/>
                     <p:selectOneMenu id="selAndarC"
                                      value="#{apartamentoController.apartamento.andar}"
-                                     converter="#{andarConverter}"
+                                     converter="andarConverter"
                                      required="true"
                                      requiredMessage="Selecione um andar!">
                         <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
@@ -160,7 +150,7 @@
                     <p:outputLabel value="Andar:" for="selAndarE"/>
                     <p:selectOneMenu id="selAndarE"
                                      value="#{apartamentoController.selected.andar}"
-                                     converter="#{andarConverter}"
+                                     converter="andarConverter"
                                      required="true"
                                      requiredMessage="Selecione um andar!">
                         <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>

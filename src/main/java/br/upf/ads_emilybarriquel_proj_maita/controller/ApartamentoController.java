@@ -83,11 +83,31 @@ public class ApartamentoController implements Serializable {
     }
 
     public void adicionarApartamento() {
-        persist(PersistAction.CREATE, "Apartamento cadastrado com sucesso!");
+
+    for (ApartamentoEntity a : getApartamentoList()) {
+
+        if (a.getNumero().equals(apartamento.getNumero())) {
+            addErrorMessage("Já existe um apartamento com este número.");
+            return;
+        }
+    }
+
+    persist(PersistAction.CREATE, "Apartamento cadastrado com sucesso!");
     }
 
     public void editarApartamento() {
-        persist(PersistAction.UPDATE, "Apartamento alterado com sucesso!");
+
+    for (ApartamentoEntity a : getApartamentoList()) {
+
+        if (!a.getId().equals(selected.getId())
+                && a.getNumero().equals(selected.getNumero())) {
+
+            addErrorMessage("Já existe um apartamento com este número.");
+            return;
+        }
+    }
+
+    persist(PersistAction.UPDATE, "Apartamento alterado com sucesso!");
     }
 
     public void deletarApartamento() {
