@@ -1,0 +1,206 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">
+        <h:outputText value="Apartamentos"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmList">
+            <h:panelGroup id="pngList">
+                <p:growl id="growl" showDetail="true"/>
+
+                <p:fieldset legend="Filtrar por Andar" toggleable="true">
+                    <h:panelGrid columns="3" cellpadding="6">
+                        <p:outputLabel value="Andar:" for="selAndarFiltro"/>
+                        <p:selectOneMenu id="selAndarFiltro"
+                                         value="#{apartamentoController.andarFiltro}"
+                                         converter="#{andarConverter}">
+                            <f:selectItem itemLabel="-- Todos os Andares --" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{apartamentoController.andarList}"
+                                           var="a" itemLabel="#{a.numero}º Andar - #{a.nome}"
+                                           itemValue="#{a}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="Filtrar" icon="pi pi-filter"
+                                         action="#{apartamentoController.filtrarPorAndar()}"
+                                         update=":frmList"/>
+                    </h:panelGrid>
+                </p:fieldset>
+
+                <p:fieldset legend="Gerenciar Apartamentos" toggleable="true">
+                    <p:dataTable id="datalist"
+                                 value="#{apartamentoController.andarFiltro != null ?
+                                         apartamentoController.apartamentoListByAndar :
+                                         apartamentoController.apartamentoList}"
+                                 var="item"
+                                 selectionMode="single"
+                                 selection="#{apartamentoController.selected}"
+                                 widgetVar="datalistApartamentoWidgetVar"
+                                 rowKey="#{item.id}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,20"
+                                 emptyMessage="Nenhum apartamento encontrado.">
+
+                        <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
+                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+
+                        <p:column width="5%" sortBy="#{item.id}" filterBy="#{item.id}">
+                            <f:facet name="header"><h:outputText value="ID"/></f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                        <p:column width="10%" sortBy="#{item.numero}" filterBy="#{item.numero}">
+                            <f:facet name="header"><h:outputText value="Número"/></f:facet>
+                            <h:outputText value="#{item.numero}"/>
+                        </p:column>
+
+                        <p:column width="15%" sortBy="#{item.andar.numero}">filterBy="#{item.andar.nome}">
+                            <f:facet name="header"><h:outputText value="Andar"/></f:facet>
+                            <h:outputText value="#{item.andar.numero}º - #{item.andar.nome}"/>
+                        </p:column>
+
+                        <p:column width="25%" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                            <f:facet name="header"><h:outputText value="Descrição"/></f:facet>
+                            <h:outputText value="#{item.descricao}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnCreate" value="Novo Apartamento" icon="pi pi-plus"
+                                             actionListener="#{apartamentoController.prepareAdicionar()}"
+                                             update=":CreateFormApartamento"
+                                             oncomplete="PF('dlgCreateApartamento').show()"/>
+
+                            <p:commandButton id="btnEdit" icon="pi pi-pencil" value="Editar"
+                                             update=":formEditApartamento"
+                                             oncomplete="PF('dlgEditApartamento').show()"
+                                             disabled="#{empty apartamentoController.selected}"/>
+
+                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir"
+                                             actionListener="#{apartamentoController.deletarApartamento()}"
+                                             update=":frmList"
+                                             disabled="#{empty apartamentoController.selected}">
+                                <p:confirm header="Confirmar Exclusão"
+                                           message="Confirma a exclusão deste apartamento?"
+                                           icon="ui-icon-alert"/>
+                            </p:commandButton>
+
+                            <p:commandButton id="btnView" icon="pi pi-eye" value="Detalhes"
+                                             update=":formViewApartamento"
+                                             oncomplete="PF('dlgViewApartamento').show()"
+                                             disabled="#{empty apartamentoController.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:fieldset>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check"/>
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  icon="fa fa-times"/>
+                </p:confirmDialog>
+            </h:panelGroup>
+        </h:form>
+
+        <!-- DIALOG: CRIAR APARTAMENTO -->
+        <p:dialog header="Novo Apartamento" widgetVar="dlgCreateApartamento" height="380" width="550"
+                  showEffect="fade" modal="true">
+            <h:form id="CreateFormApartamento">
+                <p:growl id="growlCreate" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="6">
+
+                    <p:outputLabel value="Número:" for="iptNumeroC"/>
+                    <p:inputText id="iptNumeroC" size="20" label="Número" required="true"
+                                 requiredMessage="Número é obrigatório!"
+                                 value="#{apartamentoController.apartamento.numero}" maxlength="20"/>
+
+                    <p:outputLabel value="Andar:" for="selAndarC"/>
+                    <p:selectOneMenu id="selAndarC"
+                                     value="#{apartamentoController.apartamento.andar}"
+                                     converter="#{andarConverter}"
+                                     required="true"
+                                     requiredMessage="Selecione um andar!">
+                        <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{apartamentoController.andarList}"
+                                       var="a" itemLabel="#{a.numero}º Andar - #{a.nome}"
+                                       itemValue="#{a}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Descrição:" for="iptDescC"/>
+                    <p:inputTextarea id="iptDescC" rows="3" cols="30" label="Descrição"
+                                     value="#{apartamentoController.apartamento.descricao}" maxlength="500"/>
+
+                </h:panelGrid>
+                <p:commandButton value="Salvar" icon="pi pi-save"
+                                 action="#{apartamentoController.adicionarApartamento()}"
+                                 update="@form, :frmList"
+                                 oncomplete="PF('dlgCreateApartamento').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- DIALOG: EDITAR APARTAMENTO -->
+        <p:dialog header="Editar Apartamento" widgetVar="dlgEditApartamento" height="380" width="550"
+                  showEffect="fade" modal="true">
+            <h:form id="formEditApartamento">
+                <p:growl id="growlEdit" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="6"
+                             rendered="#{apartamentoController.selected != null}">
+
+                    <p:outputLabel value="ID:" for="iptIdE"/>
+                    <p:inputText id="iptIdE" size="10" disabled="true"
+                                 value="#{apartamentoController.selected.id}"/>
+
+                    <p:outputLabel value="Número:" for="iptNumeroE"/>
+                    <p:inputText id="iptNumeroE" size="20" label="Número" required="true"
+                                 requiredMessage="Número é obrigatório!"
+                                 value="#{apartamentoController.selected.numero}" maxlength="20"/>
+
+                    <p:outputLabel value="Andar:" for="selAndarE"/>
+                    <p:selectOneMenu id="selAndarE"
+                                     value="#{apartamentoController.selected.andar}"
+                                     converter="#{andarConverter}"
+                                     required="true"
+                                     requiredMessage="Selecione um andar!">
+                        <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{apartamentoController.andarList}"
+                                       var="a" itemLabel="#{a.numero}º Andar - #{a.nome}"
+                                       itemValue="#{a}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Descrição:" for="iptDescE"/>
+                    <p:inputTextarea id="iptDescE" rows="3" cols="30" label="Descrição"
+                                     value="#{apartamentoController.selected.descricao}" maxlength="500"/>
+
+                </h:panelGrid>
+                <p:commandButton value="Salvar" icon="pi pi-save"
+                                 action="#{apartamentoController.editarApartamento()}"
+                                 update="@form, :frmList"
+                                 oncomplete="PF('dlgEditApartamento').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- DIALOG: VISUALIZAR APARTAMENTO -->
+        <p:dialog header="Detalhes do Apartamento" widgetVar="dlgViewApartamento" height="280" width="480"
+                  showEffect="fade" modal="true">
+            <h:form id="formViewApartamento">
+                <h:panelGrid columns="2" cellpadding="6"
+                             rendered="#{apartamentoController.selected != null}">
+                    <p:outputLabel value="ID:"/>
+                    <p:outputLabel value="#{apartamentoController.selected.id}"/>
+
+                    <p:outputLabel value="Número:"/>
+                    <p:outputLabel value="#{apartamentoController.selected.numero}"/>
+
+                    <p:outputLabel value="Andar:"/>
+                    <p:outputLabel value="#{apartamentoController.selected.andar.numero}º - #{apartamentoController.selected.andar.nome}"/>
+
+                    <p:outputLabel value="Descrição:"/>
+                    <p:outputLabel value="#{apartamentoController.selected.descricao}"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

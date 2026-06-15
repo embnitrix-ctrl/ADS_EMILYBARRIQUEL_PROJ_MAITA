@@ -1,0 +1,301 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">
+        <h:outputText value="Manutenções"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmList">
+            <h:panelGroup id="pngList">
+                <p:growl id="growl" showDetail="true"/>
+
+                <p:fieldset legend="Filtrar por Apartamento" toggleable="true">
+                    <h:panelGrid columns="3" cellpadding="6">
+                        <p:outputLabel value="Apartamento:" for="selAptFiltro"/>
+                        <p:selectOneMenu id="selAptFiltro"
+                                         value="#{manutencaoController.apartamentoFiltro}"
+                                         converter="#{apartamentoConverter}">
+                            <f:selectItem itemLabel="-- Todos os Apartamentos --" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{manutencaoController.apartamentoList}"
+                                           var="ap"
+                                           itemLabel="Apto #{ap.numero} - #{ap.andar.numero}º Andar"
+                                           itemValue="#{ap}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="Filtrar" icon="pi pi-filter"
+                                         action="#{manutencaoController.filtrarPorApartamento()}"
+                                         update=":frmList"/>
+                    </h:panelGrid>
+                </p:fieldset>
+
+                <p:fieldset legend="Chamados de Manutenção" toggleable="true">
+                    <p:dataTable id="datalist"
+                                 value="#{manutencaoController.apartamentoFiltro != null ?
+                                         manutencaoController.manutencaoListByApartamento :
+                                         manutencaoController.manutencaoList}"
+                                 var="item"
+                                 selectionMode="single"
+                                 selection="#{manutencaoController.selected}"
+                                 widgetVar="datalistManutencaoWidgetVar"
+                                 rowKey="#{item.id}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,20"
+                                 emptyMessage="Nenhum chamado encontrado.">
+
+                        <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView btnFechar btnReabrir"/>
+                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView btnFechar btnReabrir"/>
+
+                        <p:column width="4%" sortBy="#{item.id}">
+                            <f:facet name="header"><h:outputText value="ID"/></f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                        <p:column width="10%" sortBy="#{item.apartamento.numero}" filterBy="#{item.apartamento.numero}">
+                            <f:facet name="header"><h:outputText value="Apartamento"/></f:facet>
+                            <h:outputText value="Apto #{item.apartamento.numero}"/>
+                        </p:column>
+
+                        <p:column width="8%">
+                            <f:facet name="header"><h:outputText value="Andar"/></f:facet>
+                            <h:outputText value="#{item.apartamento.andar.numero}º Andar"/>
+                        </p:column>
+
+                        <p:column width="22%" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                            <f:facet name="header"><h:outputText value="Descrição"/></f:facet>
+                            <h:outputText value="#{item.descricao}"/>
+                        </p:column>
+
+                        <p:column width="10%" sortBy="#{item.tipo}" filterBy="#{item.tipo}">
+                            <f:facet name="header"><h:outputText value="Tipo"/></f:facet>
+                            <h:outputText value="#{item.tipo}"/>
+                        </p:column>
+
+                        <p:column width="8%" sortBy="#{item.status}" filterBy="#{item.status}">
+                            <f:facet name="header"><h:outputText value="Status"/></f:facet>
+                            <p:tag value="#{item.status}"
+                                   severity="#{item.status == 'ABERTO' ? 'warning' : 'success'}"/>
+                        </p:column>
+
+                        <p:column width="12%" sortBy="#{item.dataAbertura}">
+                            <f:facet name="header"><h:outputText value="Abertura"/></f:facet>
+                            <h:outputText value="#{item.dataAbertura}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column width="12%" sortBy="#{item.dataFechamento}">
+                            <f:facet name="header"><h:outputText value="Fechamento"/></f:facet>
+                            <h:outputText value="#{item.dataFechamento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnCreate" value="Abrir Chamado" icon="pi pi-plus"
+                                             actionListener="#{manutencaoController.prepareAdicionar()}"
+                                             update=":CreateFormManutencao"
+                                             oncomplete="PF('dlgCreateManutencao').show()"/>
+
+                            <p:commandButton id="btnFechar" icon="pi pi-check-circle" value="Fechar Chamado"
+                                             update=":formFecharManutencao"
+                                             oncomplete="PF('dlgFecharManutencao').show()"
+                                             disabled="#{empty manutencaoController.selected or manutencaoController.selected.status == 'FECHADO'}"/>
+
+                            <p:commandButton id="btnReabrir" icon="pi pi-refresh" value="Reabrir Chamado"
+                                             actionListener="#{manutencaoController.reabrirChamado()}"
+                                             update=":frmList"
+                                             disabled="#{empty manutencaoController.selected or manutencaoController.selected.status == 'ABERTO'}">
+                                <p:confirm header="Confirmar Reabertura"
+                                           message="Deseja reabrir este chamado?"
+                                           icon="ui-icon-alert"/>
+                            </p:commandButton>
+
+                            <p:commandButton id="btnEdit" icon="pi pi-pencil" value="Editar"
+                                             update=":formEditManutencao"
+                                             oncomplete="PF('dlgEditManutencao').show()"
+                                             disabled="#{empty manutencaoController.selected}"/>
+
+                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir"
+                                             actionListener="#{manutencaoController.deletarManutencao()}"
+                                             update=":frmList"
+                                             disabled="#{empty manutencaoController.selected}">
+                                <p:confirm header="Confirmar Exclusão"
+                                           message="Confirma a exclusão deste chamado?"
+                                           icon="ui-icon-alert"/>
+                            </p:commandButton>
+
+                            <p:commandButton id="btnView" icon="pi pi-eye" value="Detalhes"
+                                             update=":formViewManutencao"
+                                             oncomplete="PF('dlgViewManutencao').show()"
+                                             disabled="#{empty manutencaoController.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:fieldset>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check"/>
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  icon="fa fa-times"/>
+                </p:confirmDialog>
+            </h:panelGroup>
+        </h:form>
+
+        <!-- DIALOG: ABRIR CHAMADO -->
+        <p:dialog header="Abrir Chamado de Manutenção" widgetVar="dlgCreateManutencao"
+                  height="420" width="580" showEffect="fade" modal="true">
+            <h:form id="CreateFormManutencao">
+                <p:growl id="growlCreate" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="6">
+
+                    <p:outputLabel value="Apartamento:" for="selAptC"/>
+                    <p:selectOneMenu id="selAptC"
+                                     value="#{manutencaoController.manutencao.apartamento}"
+                                     converter="#{apartamentoConverter}"
+                                     required="true"
+                                     requiredMessage="Selecione um apartamento!">
+                        <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{manutencaoController.apartamentoList}"
+                                       var="ap"
+                                       itemLabel="Apto #{ap.numero} - #{ap.andar.numero}º Andar"
+                                       itemValue="#{ap}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Tipo:" for="iptTipoC"/>
+                    <p:inputText id="iptTipoC" size="30" label="Tipo"
+                                 value="#{manutencaoController.manutencao.tipo}"
+                                 maxlength="100"
+                                 placeholder="Ex: Elétrica, Hidráulica, Estrutural..."/>
+
+                    <p:outputLabel value="Descrição:" for="iptDescC"/>
+                    <p:inputTextarea id="iptDescC" rows="4" cols="32" label="Descrição"
+                                     required="true"
+                                     requiredMessage="Descrição é obrigatória!"
+                                     value="#{manutencaoController.manutencao.descricao}"
+                                     maxlength="500"/>
+
+                </h:panelGrid>
+                <p:commandButton value="Abrir Chamado" icon="pi pi-save"
+                                 action="#{manutencaoController.abrirChamado()}"
+                                 update="@form, :frmList"
+                                 oncomplete="PF('dlgCreateManutencao').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- DIALOG: FECHAR CHAMADO -->
+        <p:dialog header="Fechar Chamado" widgetVar="dlgFecharManutencao"
+                  height="300" width="520" showEffect="fade" modal="true">
+            <h:form id="formFecharManutencao">
+                <p:growl id="growlFechar" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="6"
+                             rendered="#{manutencaoController.selected != null}">
+
+                    <p:outputLabel value="Chamado Nº:"/>
+                    <p:outputLabel value="#{manutencaoController.selected.id}"/>
+
+                    <p:outputLabel value="Apartamento:"/>
+                    <p:outputLabel value="Apto #{manutencaoController.selected.apartamento.numero} - #{manutencaoController.selected.apartamento.andar.numero}º Andar"/>
+
+                    <p:outputLabel value="Observação:" for="iptObsF"/>
+                    <p:inputTextarea id="iptObsF" rows="3" cols="32"
+                                     label="Observação"
+                                     value="#{manutencaoController.selected.observacaoFechamento}"
+                                     maxlength="500"
+                                     placeholder="Descreva a resolução..."/>
+
+                </h:panelGrid>
+                <p:commandButton value="Confirmar Fechamento" icon="pi pi-check"
+                                 action="#{manutencaoController.fecharChamado()}"
+                                 update="@form, :frmList"
+                                 oncomplete="PF('dlgFecharManutencao').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- DIALOG: EDITAR MANUTENÇÃO -->
+        <p:dialog header="Editar Manutenção" widgetVar="dlgEditManutencao"
+                  height="420" width="580" showEffect="fade" modal="true">
+            <h:form id="formEditManutencao">
+                <p:growl id="growlEdit" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="6"
+                             rendered="#{manutencaoController.selected != null}">
+
+                    <p:outputLabel value="ID:" for="iptIdE"/>
+                    <p:inputText id="iptIdE" size="10" disabled="true"
+                                 value="#{manutencaoController.selected.id}"/>
+
+                    <p:outputLabel value="Apartamento:" for="selAptE"/>
+                    <p:selectOneMenu id="selAptE"
+                                     value="#{manutencaoController.selected.apartamento}"
+                                     converter="#{apartamentoConverter}"
+                                     required="true"
+                                     requiredMessage="Selecione um apartamento!">
+                        <f:selectItem itemLabel="-- Selecione --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{manutencaoController.apartamentoList}"
+                                       var="ap"
+                                       itemLabel="Apto #{ap.numero} - #{ap.andar.numero}º Andar"
+                                       itemValue="#{ap}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Tipo:" for="iptTipoE"/>
+                    <p:inputText id="iptTipoE" size="30" label="Tipo"
+                                 value="#{manutencaoController.selected.tipo}" maxlength="100"/>
+
+                    <p:outputLabel value="Descrição:" for="iptDescE"/>
+                    <p:inputTextarea id="iptDescE" rows="3" cols="32" label="Descrição"
+                                     required="true"
+                                     requiredMessage="Descrição é obrigatória!"
+                                     value="#{manutencaoController.selected.descricao}" maxlength="500"/>
+
+                </h:panelGrid>
+                <p:commandButton value="Salvar" icon="pi pi-save"
+                                 action="#{manutencaoController.editarManutencao()}"
+                                 update="@form, :frmList"
+                                 oncomplete="PF('dlgEditManutencao').hide()"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- DIALOG: VISUALIZAR MANUTENÇÃO -->
+        <p:dialog header="Detalhes do Chamado" widgetVar="dlgViewManutencao"
+                  height="400" width="520" showEffect="fade" modal="true">
+            <h:form id="formViewManutencao">
+                <h:panelGrid columns="2" cellpadding="6"
+                             rendered="#{manutencaoController.selected != null}">
+
+                    <p:outputLabel value="ID:"/>
+                    <p:outputLabel value="#{manutencaoController.selected.id}"/>
+
+                    <p:outputLabel value="Apartamento:"/>
+                    <p:outputLabel value="Apto #{manutencaoController.selected.apartamento.numero} - #{manutencaoController.selected.apartamento.andar.numero}º Andar"/>
+
+                    <p:outputLabel value="Tipo:"/>
+                    <p:outputLabel value="#{manutencaoController.selected.tipo}"/>
+
+                    <p:outputLabel value="Descrição:"/>
+                    <p:outputLabel value="#{manutencaoController.selected.descricao}"/>
+
+                    <p:outputLabel value="Status:"/>
+                    <p:tag value="#{manutencaoController.selected.status}"
+                           severity="#{manutencaoController.selected.status == 'ABERTO' ? 'warning' : 'success'}"/>
+
+                    <p:outputLabel value="Data Abertura:"/>
+                    <h:outputText value="#{manutencaoController.selected.dataAbertura}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+
+                    <p:outputLabel value="Data Fechamento:"/>
+                    <h:outputText value="#{manutencaoController.selected.dataFechamento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+
+                    <p:outputLabel value="Obs. Fechamento:"/>
+                    <p:outputLabel value="#{manutencaoController.selected.observacaoFechamento}"/>
+
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
