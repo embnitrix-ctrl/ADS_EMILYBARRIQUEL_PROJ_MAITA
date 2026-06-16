@@ -67,21 +67,19 @@ public class LoginController implements Serializable {
         return null;
     }
 
-    public String logout() {
+   public String logout() {
 
-        funcionarioLogado = null;
+    HttpSession session = (HttpSession) FacesContext
+            .getCurrentInstance()
+            .getExternalContext()
+            .getSession(false);
 
-        HttpSession session = (HttpSession)
-                FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getSession(false);
-
-        if (session != null) {
-            session.invalidate();
-        }
-
-        return "/login.xhtml?faces-redirect=true";
+    if (session != null) {
+        session.invalidate();
     }
+
+    return "/login.xhtml?faces-redirect=true";
+}
 
     public FuncionarioEntity getFuncionario() {
         return funcionario;

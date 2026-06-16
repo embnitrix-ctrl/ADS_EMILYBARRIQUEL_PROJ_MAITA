@@ -24,10 +24,10 @@
 
                     <p:menuitem id="mnuManutencao" value="Manutenção" icon="pi pi-fw pi-wrench" outcome="/admin/manutencao.xhtml"/>
                 
-                    <p:menuitem id="mnuSair"
-                        value="Sair"
-                        icon="pi pi-fw pi-sign-out"
-                        action="#{loginController.logout()}"/>
+                    <p:menuitem value="Sair"
+                    icon="pi pi-sign-out"
+                     outcome="/login.xhtml"
+                       action="#{loginController.logout()}" />
 
                 </pm:menu>
             </h:form>
