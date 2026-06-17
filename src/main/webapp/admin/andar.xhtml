@@ -10,6 +10,39 @@
     </ui:define>
 
     <ui:define name="content">
+        <style>
+            /* Mata o botão azul escuro (Ativo) e força o vermelho/bordô */
+            body .ui-button {
+                background-color: #a31436 !important;
+                border: 1px solid #a31436 !important;
+                color: #ffffff !important;
+                border-radius: 0px !important;
+                text-transform: uppercase !important;
+                font-weight: bold !important;
+            }
+
+            /* Efeito ao passar o mouse nos botões ativos */
+            body .ui-button:not(.ui-state-disabled):hover,
+            body .ui-button:not(.ui-state-disabled):focus {
+                background-color: #d11945 !important;
+                border-color: #d11945 !important;
+                box-shadow: none !important;
+            }
+
+            /* Mata o azul claro dos botões Desabilitados e aplica um tom bege inativo */
+            body .ui-button.ui-state-disabled {
+                background-color: #d5c8b5 !important;
+                border: 1px solid #d5c8b5 !important;
+                color: #610b1f !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* Garante que os ícones acompanhem a cor do texto nos botões desabilitados */
+            body .ui-button.ui-state-disabled .ui-icon,
+            body .ui-button.ui-state-disabled .ui-button-icon-left {
+                color: #610b1f !important;
+            }
+        </style>
         <h:form id="frmList">
             <h:panelGroup id="pngList">
                 <p:growl id="growl" showDetail="true"/>

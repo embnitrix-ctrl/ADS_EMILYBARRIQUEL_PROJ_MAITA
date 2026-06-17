@@ -1,45 +1,77 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui" 
                 template="/WEB-INF/template.xhtml">
-    
+                
     <ui:define name="title">
-        <h:outputText value="Funcionario"></h:outputText>
+        <h:outputText value="Funcionario"/>
     </ui:define>
-        
+    
     <ui:define name="content">
-        <h:form id="frmList">            
-            <h:panelGroup id="pngList"> 
-                <p:growl id="growl" showDetail="true" />
-                <p:fieldset toggleable="true">
-                    <p:dataTable id="datalist" value="#{funcionarioController.funcionarioList}" var="item"  
-                                 selectionMode="single" selection="#{funcionarioController.selected}"
-                                 widgetVar="datalistfuncionarioWidgetVar"
-                                 rowKey="#{item.id}"
-                                 paginator="true"
-                                 rows="3"
-                                 rowsPerPageTemplate="5,10,50,100"
-                                 emptyMessage="Não há...">
-                        
-                        <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
-                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+        <style>
+            /* Mata o botão azul escuro (Ativo) e força o vermelho/bordô */
+            body .ui-button {
+                background-color: #a31436 !important;
+                border: 1px solid #a31436 !important;
+                color: #ffffff !important;
+                border-radius: 0px !important;
+                text-transform: uppercase !important;
+                font-weight: bold !important;
+            }
 
+            /* Efeito ao passar o mouse nos botões ativos */
+            body .ui-button:not(.ui-state-disabled):hover,
+            body .ui-button:not(.ui-state-disabled):focus {
+                background-color: #d11945 !important;
+                border-color: #d11945 !important;
+                box-shadow: none !important;
+            }
+
+            /* Mata o azul claro dos botões Desabilitados e aplica um tom bege inativo */
+            body .ui-button.ui-state-disabled {
+                background-color: #d5c8b5 !important;
+                border: 1px solid #d5c8b5 !important;
+                color: #610b1f !important;
+                opacity: 0.8 !important;
+            }
+            
+            /* Garante que os ícones acompanhem a cor do texto nos botões desabilitados */
+            body .ui-button.ui-state-disabled .ui-icon,
+            body .ui-button.ui-state-disabled .ui-button-icon-left {
+                color: #610b1f !important;
+            }
+        </style>
+
+        <h:form id="frmList">
+            <h:panelGroup id="pngList">
+                <p:growl id="growl" showDetail="true"/>
+                
+                <p:fieldset toggleable="true">
+                    <p:dataTable id="datalist" value="#{funcionarioController.funcionarioList}" var="item" 
+                                 selectionMode="single" selection="#{funcionarioController.selected}" 
+                                 widgetVar="datalistFuncionarioWidgetVar" rowKey="#{item.id}" 
+                                 paginator="true" rows="5" rowsPerPageTemplate="5,10,50,100" 
+                                 emptyMessage="Nenhum funcionario cadastrado...">
+                                 
+                        <p:ajax event="rowSelect" update="btnEdit btnDelete btnView"/>
+                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+                        
                         <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
                             <f:facet name="header">
                                 <h:outputText value="ID"/>
                             </f:facet>
                             <h:outputText value="#{item.id}"/>
                         </p:column>
-
+                        
                         <p:column width="10%" sortBy="#{item.nome}" filterBy="#{item.nome}">
                             <f:facet name="header">
                                 <h:outputText value="Nome"/>
                             </f:facet>
                             <h:outputText value="#{item.nome}"/>
                         </p:column>
-
+                        
                         <p:column width="8%" sortBy="#{item.email}" filterBy="#{item.email}">
                             <f:facet name="header">
                                 <h:outputText value="Email"/>
@@ -48,115 +80,80 @@
                         </p:column>
                         
                         <f:facet name="footer">
-                            <p:commandButton id="btnCreate" value="Incluir Funcionario" icon="pi pi-file" 
-                                             actionListener="#{funcionarioController.prepareAdicionar()}"
-                                             update=":CreateForm"
-                                             oncomplete="PF('dlgCreate').show()"/>  
-
-                            <p:commandButton id="btnEdit" icon="pi pi-user-edit" value="Editar Funcionario" 
-                                             update=":formEdit" oncomplete="PF('dlgEdit').show()" 
-                                             disabled="#{empty funcionarioController.selected}"/>
-
-                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir Funcionario" 
-                                             actionListener="#{funcionarioController.deletarFuncionario()}" update=":frmList" 
-                                             disabled="#{empty funcionarioController.selected}">
-                                <p:confirm header="Confirmar Exclusão" message="Você confirma exclusão do registro?" 
-                                           icon="ui-icon-alert" />
+                            <p:commandButton id="btnCreate" value="Incluir Funcionario" icon="pi pi-file" actionListener="#{funcionarioController.prepareAdicionar()}" update=":CreateForm" onclick="PF('dlgCreate').show()"/>
+                            <p:commandButton id="btnEdit" icon="pi pi-user-edit" value="Editar" update="formEdit" oncomplete="PF('dlgEdit').show()" disabled="#{empty funcionarioController.selected}"/>
+                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir" actionListener="#{funcionarioController.deletarFuncionario()}" update="frmList" disabled="#{empty funcionarioController.selected}">
+                                <p:confirm header="Confirmar Exclusão" message="Você confirma a exclusão do registro?" icon="ui-icon-alert"/>
                             </p:commandButton>
-
-                            <p:commandButton id="btnView" icon="pi pi-user-edit" value="Detalhes do Funcionario" 
-                                             update=":formView" oncomplete="PF('dlgView').show()" 
-                                             disabled="#{empty funcionarioController.selected}"/>
+                            <p:commandButton id="btnView" icon="pi pi-eye" value="Detalhes" update="formView" oncomplete="PF('dlgView').show()" disabled="#{empty funcionarioController.selected}"/>
                         </f:facet>
                     </p:dataTable>
-                </p:fieldset> 
+                </p:fieldset>
                 
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
-                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
                 </p:confirmDialog>
-
             </h:panelGroup>
         </h:form>
         
-        <p:dialog header="Novo Funcionario" widgetVar="dlgCreate" height="400" width="600" showEffect="fade" modal="true">
+        <p:dialog header="Novo Funcionario" widgetVar="dlgCreate" height="250" width="600" showEffect="fade" modal="true">
             <h:form id="CreateForm">
-                <p:growl id="growl" showDetail="true" />
-                <h:panelGrid id="pngCadastro" columns="2">   
+                <p:growl id="growl" showDetail="true"/>
+                <h:panelGrid id="pngCadastro" columns="2">
                     <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true" 
-                                 requiredMessage="Obrigatório!"
-                                 value="#{funcionarioController.funcionario.nome}" maxlength="50" />
+                    <p:inputText id="iptNome" size="40" label="Nome" required="true" requiredMessage="O atributo nome é obrigatório" value="#{funcionarioController.funcionario.nome}" maxlength="50"/>
                     
                     <p:outputLabel id="oplEmail" value="Email:" for="iptEmail"/>
-                    <p:inputText id="iptEmail" size="40" label="Email" required="true" 
-                                 requiredMessage="Obrigatório" validatorMessage="Inválido"
-                                 value="#{funcionarioController.funcionario.email}" maxlength="50" >
-                        <f:validateRegex pattern="[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})"  />
+                    <p:inputText id="iptEmail" size="40" label="Email" required="true" requiredMessage="O atributo email é obrigatório" validatorMessage="Campo email é inválido" value="#{funcionarioController.funcionario.email}" maxlength="50">
+                        <f:validateRegex pattern="[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})"/>
                     </p:inputText>
                     
                     <p:outputLabel id="oplSenha" value="Senha:" for="iptSenha"/>
-                    <p:inputText id="iptSenha" size="40" label="Senha" required="true" 
-                                 requiredMessage="Obrigatório"
-                                 value="#{funcionarioController.funcionario.senha}" maxlength="50" />    
-                                
-                </h:panelGrid>   
-                <p:commandButton actionListener="#{funcionarioController.adicionarFuncionario()}" 
-                                 icon="pi pi-save" value="Cadastrar" 
-                                 update=":frmList, CreateForm" 
-                                onclick="dlgCreate.hide()"/>
-                    
+                    <p:inputText id="iptSenha" size="40" label="Senha" required="true" requiredMessage="O atributo senha é obrigatório" value="#{funcionarioController.funcionario.senha}"/>
+                </h:panelGrid>
+                <br/>
+                <p:commandButton actionListener="#{funcionarioController.adicionarFuncionario()}" icon="pi pi-save" value="Cadastrar" update=":frmList, CreateForm" onclick="dlgCreate.hide()"/>
             </h:form>
         </p:dialog>
         
-         <p:dialog header="Editar Funcionario" widgetVar="dlgEdit" height="400" width="600" showEffect="fade" modal="true">
+        <p:dialog header="Editar" widgetVar="dlgEdit" height="250" width="600" showEffect="fade" modal="true">
             <h:form id="formEdit">
-                <p:growl id="growl" showDetail="true" />
-                <h:panelGrid id="pngEdicao" columns="2" rendered="#{funcionarioController.selected != null}">   
+                <p:growl id="growl" showDetail="true"/>
+                <h:panelGrid id="pngEdicao" columns="2" rendered="#{funcionarioController.selected != null}">
                     <p:outputLabel id="oplId" value="ID:" for="iptId"/>
-                    <p:inputText id="iptId" size="10" label="ID" disabled="true"
-                                 value="#{funcionarioController.selected.id}"  />
-
+                    <p:inputText id="iptId" size="10" label="ID" disabled="true" value="#{funcionarioController.selected.id}"/>
+                    
                     <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true" 
-                                 requiredMessage="O atributo nome é obrigatório"
-                                 value="#{funcionarioController.selected.nome}" maxlength="50" />
-
+                    <p:inputText id="iptNome" size="40" label="Nome" required="true" requiredMessage="O atributo nome é obrigatório" value="#{funcionarioController.selected.nome}" maxlength="50"/>
+                    
                     <p:outputLabel id="oplEmail" value="Email:" for="iptEmail"/>
-                    <p:inputText id="iptEmail" size="40" label="Nome" required="true" 
-                                 requiredMessage="O atributo email é obrigatório" validatorMessage="Campo email é inválido"
-                                 value="#{funcionarioController.selected.email}" maxlength="50" >
-                        <f:validateRegex pattern="[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})"  />
+                    <p:inputText id="iptEmail" size="40" label="Email" required="true" requiredMessage="O atributo email é obrigatório" validatorMessage="Campo email é inválido" value="#{funcionarioController.selected.email}" maxlength="50">
+                        <f:validateRegex pattern="[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})"/>
                     </p:inputText>
                     
-                     <p:outputLabel id="oplSenha" value="Senha:" for="iptSenha"/>
-                    <p:inputText id="iptSenha" size="40" label="Senha" required="true" 
-                                 requiredMessage="Obrigatório"
-                                 value="#{funcionarioController.selected.senha}" maxlength="50" >    
-                    </p:inputText>
-
-                </h:panelGrid>   
-                <p:commandButton id="btnSalvarEdicao" value="Salvar" update="@form, :frmList" 
-                                 oncomplete="PF('dlgEdit').hide()" icon="pi pi-save"
-                                 action="#{funcionarioController.editarFuncionario()}" />
+                    <p:outputLabel id="oplSenha" value="Senha:" for="iptSenha"/>
+                    <p:inputText id="iptSenha" size="40" label="Senha" required="true" requiredMessage="O atributo senha é obrigatório" value="#{funcionarioController.selected.senha}"/>
+                </h:panelGrid>
+                <br/>
+                <p:commandButton id="btnSalvarEdicao" value="Salvar" update="@form, :frmList" onclick="dlgEdit.hide()" icon="pi pi-save" action="#{funcionarioController.editarFuncionario()}"/>
             </h:form>
         </p:dialog>
         
-        <p:dialog header="Visualizar Detalhes do Funcionario" widgetVar="dlgView" height="250" 
-                  width="500" showEffect="fade" modal="true">
+        <p:dialog header="Visualizar Detalhes" widgetVar="dlgView" height="150" width="500" showEffect="fade" modal="true">
             <h:form id="formView">
-                <h:panelGrid id="pngView" columns="2" rendered="#{funcionarioController.selected != null}">   
-                    <p:outputLabel value="ID:" />
-                    <p:outputLabel value="#{funcionarioController.selected.id}"  />
-
-                    <p:outputLabel value="Nome: " />
-                    <p:outputLabel value="#{funcionarioController.selected.nome}" />
-
-                    <p:outputLabel value="Email: " />                    
-                    <p:outputLabel value="#{funcionarioController.selected.email}" />
-
-                </h:panelGrid>   
+                <h:panelGrid id="pngView" columns="2" rendered="#{funcionarioController.selected != null}">
+                    <p:outputLabel value="ID:"/>
+                    <p:outputLabel value="#{funcionarioController.selected.id}"/>
+                    
+                    <p:outputLabel value="Nome: "/>
+                    <p:outputLabel value="#{funcionarioController.selected.nome}"/>
+                    
+                    <p:outputLabel value="Email: "/>
+                    <p:outputLabel value="#{funcionarioController.selected.email}"/>
+                </h:panelGrid>
             </h:form>
         </p:dialog>
+        
     </ui:define>
 </ui:composition>
